@@ -1,43 +1,621 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clean Driveway — Flat Bush, Auckland</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700;900&display=swap');
 
-on:
-  # Runs on pushes targeting the default branch
-  push:
-    branches: ["main"]
+  :root{
+    --navy:#1B2A3D;
+    --near-black:#0F1720;
+    --concrete:#F5F4F0;
+    --wet-grey:#3B4A5A;
+    --amber:#FFB020;
+    --amber-dim:#E09A10;
+  }
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--concrete);
+    color:var(--near-black);
+    font-family:'Archivo',sans-serif;
+    overflow-x:hidden;
+  }
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+  h1,h2,h3,.display{
+    font-family:'Archivo Black', sans-serif;
+    text-transform:uppercase;
+    letter-spacing:-0.01em;
+    line-height:0.95;
+  }
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  a{color:inherit;text-decoration:none;}
 
-jobs:
-  # Single deploy job since we're just deploying
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          # Upload entire repository
-          path: '.'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5
+  .wrap{max-width:1100px;margin:0 auto;padding:0 24px;}
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:sticky;top:0;z-index:50;
+    background:var(--near-black);
+    color:var(--concrete);
+    border-bottom:3px solid var(--amber);
+  }
+  nav .wrap{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 24px;
+  }
+  .brand{
+    font-family:'Archivo Black',sans-serif;
+    font-size:1rem;
+    text-transform:uppercase;
+    letter-spacing:0.02em;
+  }
+  .brand span{color:var(--amber);}
+  .navlinks{display:flex;gap:28px;font-weight:700;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;}
+  .navlinks a{opacity:0.85;transition:opacity .2s, color .2s;}
+  .navlinks a:hover{opacity:1;color:var(--amber);}
+  .navlinks{display:none;}
+  @media(min-width:640px){.navlinks{display:flex;}}
+  .nav-cta{
+    background:var(--amber);color:var(--near-black);
+    padding:8px 16px;font-weight:900;font-size:0.8rem;
+    text-transform:uppercase;letter-spacing:0.03em;
+    border-radius:2px;
+  }
+
+  /* ---------- HERO / WIPE REVEAL ---------- */
+  .hero{
+    position:relative;
+    height:min(88vh, 720px);
+    min-height:520px;
+    overflow:hidden;
+    background:var(--wet-grey);
+  }
+  .wipe-stage{
+    position:absolute;inset:0;
+  }
+  /* dirty layer (base, full coverage) */
+  .concrete-dirty, .concrete-clean{
+    position:absolute;inset:0;
+    background-size:cover;background-position:center;
+  }
+  .concrete-dirty{
+    background:
+      repeating-linear-gradient(100deg, rgba(60,45,25,0.35) 0 3px, transparent 3px 9px),
+      repeating-linear-gradient(15deg, rgba(40,30,15,0.25) 0 2px, transparent 2px 14px),
+      radial-gradient(ellipse at 30% 40%, rgba(70,55,30,0.5), transparent 55%),
+      radial-gradient(ellipse at 75% 70%, rgba(50,40,20,0.45), transparent 50%),
+      linear-gradient(160deg, #4a4237, #37312a 60%, #2b2620);
+  }
+  .concrete-clean{
+    background:
+      repeating-linear-gradient(95deg, rgba(255,255,255,0.05) 0 2px, transparent 2px 10px),
+      linear-gradient(160deg, #cfd3d6, #b7bcc0 55%, #9fa5aa);
+    clip-path: polygon(0 0, 0% 0, 0% 100%, 0 100%);
+    animation: wipe 2.6s cubic-bezier(.7,0,.2,1) 0.4s forwards;
+  }
+  @keyframes wipe{
+    to{ clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+  }
+  .wipe-edge{
+    position:absolute; top:0; bottom:0; left:-4px;
+    width:10px;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.9), var(--amber), transparent);
+    box-shadow:0 0 30px 6px rgba(255,176,32,0.6);
+    animation: edge-move 2.6s cubic-bezier(.7,0,.2,1) 0.4s forwards;
+    opacity:0.95;
+  }
+  @keyframes edge-move{
+    to{ left:100%; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .concrete-clean{ clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); animation:none; }
+    .wipe-edge{ display:none; }
+  }
+
+  .hero-overlay{
+    position:relative;z-index:2;
+    height:100%;
+    display:flex;flex-direction:column;justify-content:flex-end;
+    padding:48px 24px 56px;
+  }
+  .hero-inner{max-width:1100px;margin:0 auto;width:100%;}
+  .eyebrow{
+    display:inline-block;
+    background:var(--amber);color:var(--near-black);
+    font-weight:900;font-size:0.75rem;letter-spacing:0.08em;
+    padding:5px 10px;margin-bottom:16px;text-transform:uppercase;
+    transform:skewX(-6deg);
+  }
+  .eyebrow span{display:inline-block;transform:skewX(6deg);}
+  .hero h1{
+    color:#fff;
+    font-size:clamp(2.4rem, 7vw, 4.6rem);
+    text-shadow:0 4px 24px rgba(0,0,0,0.35);
+  }
+  .hero h1 .amber{color:var(--amber);}
+  .hero p.sub{
+    color:var(--concrete);
+    font-size:clamp(1rem,2vw,1.2rem);
+    font-weight:500;
+    max-width:520px;
+    margin-top:16px;
+    opacity:0.92;
+  }
+  .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;margin-top:28px;}
+  .btn{
+    display:inline-block;
+    font-weight:900;text-transform:uppercase;letter-spacing:0.03em;
+    font-size:0.9rem;
+    padding:14px 26px;
+    border-radius:2px;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn-primary{
+    background:var(--amber);color:var(--near-black);
+    box-shadow:0 4px 0 var(--amber-dim);
+  }
+  .btn-primary:hover{box-shadow:0 6px 0 var(--amber-dim);}
+  .btn-ghost{
+    background:transparent;color:#fff;
+    border:2px solid rgba(255,255,255,0.6);
+  }
+  .btn-ghost:hover{border-color:#fff;}
+
+  /* ---------- SECTIONS ---------- */
+  section{padding:72px 0;}
+  .section-tag{
+    color:var(--wet-grey);
+    font-weight:900;font-size:0.78rem;letter-spacing:0.12em;
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  .section-tag::before{content:"— ";color:var(--amber);}
+  h2.section-title{
+    font-size:clamp(1.8rem,4vw,2.6rem);
+    margin-bottom:12px;
+  }
+  .section-desc{
+    max-width:560px;
+    color:#3a3a3a;
+    font-size:1.02rem;
+    line-height:1.5;
+  }
+
+  /* services */
+  .services-grid{
+    display:grid;gap:2px;
+    background:var(--near-black);
+    margin-top:40px;
+    border:2px solid var(--near-black);
+  }
+  @media(min-width:560px){.services-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(min-width:900px){.services-grid{grid-template-columns:repeat(4,1fr);}}
+  .service{
+    background:var(--concrete);
+    padding:32px 26px;
+    transition:background .2s ease;
+  }
+  .service:hover{background:#ebe8e0;}
+  .service .num{
+    font-family:'Archivo Black',sans-serif;
+    color:var(--amber);
+    font-size:0.85rem;
+    letter-spacing:0.1em;
+    display:block;margin-bottom:14px;
+  }
+  .service h3{font-size:1.15rem;margin-bottom:10px;}
+  .service p{color:#4a4a4a;font-size:0.94rem;line-height:1.5;}
+  .service-icon{
+    width:52px;height:52px;
+    margin-bottom:18px;
+    display:block;
+  }
+
+  /* action banner */
+  .action-banner{
+    background:var(--navy);
+    padding:64px 0;
+  }
+  .action-banner-inner{
+    display:flex;flex-direction:column;gap:36px;align-items:center;
+  }
+  @media(min-width:800px){
+    .action-banner-inner{flex-direction:row;gap:48px;}
+  }
+  .action-svg{
+    width:100%;max-width:520px;height:auto;
+    border-radius:4px;
+    box-shadow:0 12px 40px rgba(0,0,0,0.4);
+    flex-shrink:0;
+  }
+  .action-text{max-width:440px;}
+
+  /* pricing */
+  .pricing-wrap{background:var(--near-black);color:var(--concrete);}
+  .price-grid{
+    display:grid;gap:16px;margin-top:40px;
+  }
+  @media(min-width:760px){.price-grid{grid-template-columns:repeat(3,1fr);}}
+  .price-card{
+    background:var(--navy);
+    border:2px solid var(--wet-grey);
+    padding:32px 28px;
+    position:relative;
+  }
+  .price-card.featured{border-color:var(--amber);}
+  .price-card .tag{
+    position:absolute;top:-13px;left:24px;
+    background:var(--amber);color:var(--near-black);
+    font-weight:900;font-size:0.7rem;letter-spacing:0.08em;
+    padding:4px 10px;text-transform:uppercase;
+  }
+  .price-card h3{font-size:1.1rem;text-transform:uppercase;color:var(--concrete);margin-bottom:6px;}
+  .price-card .amt{
+    font-family:'Archivo Black',sans-serif;
+    font-size:2.6rem;color:var(--amber);
+    margin:10px 0 4px;
+  }
+  .price-card .amt sup{font-size:1.1rem;top:-1.2em;}
+  .price-card .fits{color:#c4cbd2;font-size:0.9rem;margin-bottom:18px;}
+  .price-card ul{list-style:none;font-size:0.9rem;color:#dfe3e6;line-height:1.9;}
+  .price-card ul li::before{content:"✓ ";color:var(--amber);font-weight:900;}
+  .price-note{
+    margin-top:28px;font-size:0.88rem;color:#9aa4ad;
+    border-left:3px solid var(--amber);padding-left:14px;
+  }
+
+  /* how it works */
+  .steps{
+    display:grid;gap:28px;margin-top:40px;
+  }
+  @media(min-width:760px){.steps{grid-template-columns:repeat(4,1fr);}}
+  .step{position:relative;padding-top:8px;}
+  .step .line{
+    height:4px;background:var(--wet-grey);margin-bottom:18px;position:relative;
+  }
+  .step:nth-child(1) .line{background:var(--amber);}
+  .step h3{font-size:1rem;margin-bottom:8px;}
+  .step p{font-size:0.9rem;color:#4a4a4a;line-height:1.5;}
+  .step .stepnum{
+    font-family:'Archivo Black',sans-serif;
+    font-size:0.75rem;color:var(--wet-grey);letter-spacing:0.1em;
+    margin-bottom:6px;display:block;
+  }
+
+  /* contact */
+  .contact{
+    background:var(--amber);
+    color:var(--near-black);
+  }
+  .contact-inner{
+    display:flex;flex-direction:column;gap:24px;
+    align-items:flex-start;
+  }
+  @media(min-width:760px){
+    .contact-inner{flex-direction:row;justify-content:space-between;align-items:center;}
+  }
+  .contact h2{font-size:clamp(1.8rem,4vw,2.6rem);max-width:520px;}
+  .contact-cta{
+    display:flex;flex-direction:column;gap:10px;
+  }
+  .phone-link{
+    font-family:'Archivo Black',sans-serif;
+    font-size:clamp(1.1rem, 3.4vw, 1.5rem);
+    background:var(--near-black);color:var(--amber);
+    padding:14px 22px;
+    display:inline-block;
+    letter-spacing:0.01em;
+    word-break:break-word;
+    max-width:100%;
+  }
+  .contact-sub{font-weight:600;font-size:0.9rem;}
+
+  footer{
+    background:var(--near-black);color:#8a939b;
+    padding:28px 0;font-size:0.85rem;
+    text-align:center;
+  }
+  footer span{color:var(--amber);}
+
+  .community{
+    background:var(--concrete);
+    padding:40px 0;
+    border-top:2px solid var(--near-black);
+  }
+  .community-text{
+    max-width:640px;
+    margin:0 auto;
+    text-align:center;
+    font-size:1.02rem;
+    font-weight:600;
+    color:var(--navy);
+    line-height:1.6;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">CLEAN <span>DRIVEWAY</span></div>
+    <div class="navlinks">
+      <a href="#services">Services</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#how">How it works</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <a href="https://wa.me/642041113774" class="nav-cta">WhatsApp Us</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wipe-stage">
+    <div class="concrete-dirty"></div>
+    <div class="concrete-clean"></div>
+    <div class="wipe-edge"></div>
+  </div>
+  <div class="hero-overlay">
+    <div class="hero-inner">
+      <span class="eyebrow"><span>Flat Bush · Auckland</span></span>
+      <h1>Your driveway,<br>back to <span class="amber">clean.</span></h1>
+      <p class="sub">Dirt, dust, moss, and years of buildup — blasted off concrete driveways and wooden decks across the neighborhood. Simply book an appointment for a white, clean driveway.</p>
+      <div class="hero-ctas">
+        <a href="https://wa.me/642041113774" class="btn btn-primary">WhatsApp Us</a>
+        <a href="mailto:cleandriveway66@gmail.com" class="btn btn-ghost">Email to Book</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="services">
+  <div class="wrap">
+    <div class="section-tag">What we do</div>
+    <h2 class="section-title">Driveways, concrete & decks.<br>No half-effort jobs.</h2>
+    <p class="section-desc">We specialise in exterior surfaces and do it properly — high-pressure cleaning built for concrete and timber alike, not a watered-down all-purpose service.</p>
+
+    <div class="services-grid">
+      <div class="service">
+        <svg class="service-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="6" y="46" width="52" height="6" rx="1" fill="#3B4A5A" opacity="0.25"/>
+          <rect x="10" y="24" width="18" height="10" rx="2" fill="#1B2A3D"/>
+          <rect x="28" y="27" width="14" height="4" rx="2" fill="#1B2A3D"/>
+          <circle cx="16" cy="34" r="4" fill="#0F1720"/>
+          <circle cx="24" cy="34" r="4" fill="#0F1720"/>
+          <path d="M42 29 L54 24" stroke="#FFB020" stroke-width="3" stroke-linecap="round"/>
+          <path d="M54 24 C 57 27, 57 33, 53 37" stroke="#FFB020" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <circle cx="50" cy="30" r="1.6" fill="#FFB020"/>
+          <circle cx="47" cy="35" r="1.4" fill="#FFB020"/>
+          <circle cx="53" cy="35" r="1.3" fill="#FFB020"/>
+        </svg>
+        <span class="num">01</span>
+        <h3>General Wash</h3>
+        <p>Dirt, dust, leaf buildup and everyday grime lifted off with a full-surface pressure pass.</p>
+      </div>
+      <div class="service">
+        <svg class="service-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="8" y="18" width="48" height="30" rx="2" fill="none" stroke="#3B4A5A" stroke-width="2"/>
+          <line x1="8" y1="28" x2="56" y2="28" stroke="#3B4A5A" stroke-width="1.5" opacity="0.5"/>
+          <line x1="8" y1="38" x2="56" y2="38" stroke="#3B4A5A" stroke-width="1.5" opacity="0.5"/>
+          <ellipse cx="22" cy="24" rx="4" ry="2.5" fill="#8a7a5a" opacity="0.6"/>
+          <ellipse cx="40" cy="34" rx="5" ry="3" fill="#8a7a5a" opacity="0.5"/>
+          <ellipse cx="30" cy="43" rx="3.5" ry="2.2" fill="#8a7a5a" opacity="0.55"/>
+          <path d="M12 12 L18 12 L18 16 L12 16 Z" fill="#FFB020"/>
+          <path d="M46 50 L52 50 L52 54 L46 54 Z" fill="#FFB020" opacity="0.7"/>
+        </svg>
+        <span class="num">02</span>
+        <h3>Built-Up Dirt & Stains</h3>
+        <p>Ground-in dirt, dust film, tyre marks and general staining lifted with the right pressure and technique for concrete and timber.</p>
+      </div>
+      <div class="service">
+        <svg class="service-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="8" y="20" width="48" height="28" rx="2" fill="none" stroke="#3B4A5A" stroke-width="2"/>
+          <circle cx="20" cy="30" r="6" fill="#4a6b4f" opacity="0.55"/>
+          <circle cx="26" cy="34" r="4" fill="#3d5a41" opacity="0.6"/>
+          <circle cx="16" cy="35" r="3.5" fill="#4a6b4f" opacity="0.5"/>
+          <circle cx="44" cy="40" r="5" fill="#2b2b2b" opacity="0.5"/>
+          <circle cx="49" cy="36" r="3" fill="#2b2b2b" opacity="0.45"/>
+          <path d="M8 14 C 12 10, 16 10, 18 14" stroke="#FFB020" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path d="M46 12 C 50 8, 54 8, 56 12" stroke="#FFB020" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </svg>
+        <span class="num">03</span>
+        <h3>Moss, Mould & Lichen</h3>
+        <p>Green and black patches in shaded, damp areas treated at the source, not just rinsed off the surface.</p>
+      </div>
+      <div class="service">
+        <svg class="service-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="6" y="20" width="52" height="7" rx="1.5" fill="#8a6a3e"/>
+          <rect x="6" y="30" width="52" height="7" rx="1.5" fill="#7a5c34"/>
+          <rect x="6" y="40" width="52" height="7" rx="1.5" fill="#8a6a3e"/>
+          <line x1="16" y1="20" x2="16" y2="47" stroke="#5c4526" stroke-width="1" opacity="0.4"/>
+          <line x1="34" y1="20" x2="34" y2="47" stroke="#5c4526" stroke-width="1" opacity="0.4"/>
+          <line x1="48" y1="20" x2="48" y2="47" stroke="#5c4526" stroke-width="1" opacity="0.4"/>
+          <path d="M42 16 L52 10" stroke="#FFB020" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="47" cy="22" r="1.6" fill="#fff" opacity="0.8"/>
+          <circle cx="52" cy="26" r="1.3" fill="#FFB020" opacity="0.8"/>
+          <circle cx="44" cy="27" r="1.4" fill="#fff" opacity="0.7"/>
+        </svg>
+        <span class="num">04</span>
+        <h3>Wooden Deck Cleaning</h3>
+        <p>Weathered, grey, or slippery decking brought back to life — dirt, algae, and grime lifted without damaging the timber.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="action-banner">
+  <div class="wrap action-banner-inner">
+    <svg class="action-svg" viewBox="0 0 600 320" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#3B4A5A"/>
+          <stop offset="100%" stop-color="#1B2A3D"/>
+        </linearGradient>
+        <linearGradient id="tileClean" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#9fa5aa"/>
+          <stop offset="100%" stop-color="#cfd3d6"/>
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="600" height="320" fill="url(#skyGrad)"/>
+      <!-- ground -->
+      <rect x="0" y="230" width="600" height="90" fill="#2b2620"/>
+      <!-- dirty tiles left -->
+      <g opacity="0.9">
+        <rect x="0" y="230" width="330" height="90" fill="#4a4237"/>
+        <line x1="60" y1="230" x2="60" y2="320" stroke="#2b2620" stroke-width="2"/>
+        <line x1="150" y1="230" x2="150" y2="320" stroke="#2b2620" stroke-width="2"/>
+        <line x1="240" y1="230" x2="240" y2="320" stroke="#2b2620" stroke-width="2"/>
+        <line x1="330" y1="230" x2="330" y2="320" stroke="#2b2620" stroke-width="2"/>
+        <line x1="0" y1="275" x2="330" y2="275" stroke="#2b2620" stroke-width="2"/>
+        <ellipse cx="90" cy="255" rx="18" ry="8" fill="#3d5a41" opacity="0.5"/>
+        <ellipse cx="200" cy="295" rx="22" ry="9" fill="#2b2b2b" opacity="0.45"/>
+      </g>
+      <!-- clean tiles right -->
+      <g>
+        <rect x="330" y="230" width="270" height="90" fill="url(#tileClean)"/>
+        <line x1="390" y1="230" x2="390" y2="320" stroke="#8a9096" stroke-width="2"/>
+        <line x1="450" y1="230" x2="450" y2="320" stroke="#8a9096" stroke-width="2"/>
+        <line x1="510" y1="230" x2="510" y2="320" stroke="#8a9096" stroke-width="2"/>
+        <line x1="570" y1="230" x2="570" y2="320" stroke="#8a9096" stroke-width="2"/>
+        <line x1="330" y1="275" x2="600" y2="275" stroke="#8a9096" stroke-width="2"/>
+        <circle cx="420" cy="290" r="2" fill="#fff" opacity="0.7"/>
+        <circle cx="480" cy="250" r="1.6" fill="#fff" opacity="0.6"/>
+        <circle cx="540" cy="300" r="1.8" fill="#fff" opacity="0.6"/>
+      </g>
+      <!-- figure -->
+      <g>
+        <circle cx="140" cy="150" r="14" fill="#0F1720"/>
+        <rect x="126" y="164" width="28" height="46" rx="8" fill="#1B2A3D"/>
+        <rect x="118" y="200" width="14" height="34" rx="5" fill="#0F1720"/>
+        <rect x="148" y="200" width="14" height="34" rx="5" fill="#0F1720"/>
+        <rect x="150" y="175" width="34" height="10" rx="5" fill="#1B2A3D"/>
+        <rect x="178" y="168" width="10" height="24" rx="3" fill="#3B4A5A"/>
+      </g>
+      <!-- pressure washer wand + jet -->
+      <path d="M186 178 L330 250" stroke="#0F1720" stroke-width="5" stroke-linecap="round"/>
+      <path d="M330 250 C 380 258, 430 260, 470 258" stroke="#FFB020" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.95"/>
+      <path d="M330 250 C 380 264, 430 270, 480 270" stroke="#fff" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.7"/>
+      <!-- spray droplets -->
+      <circle cx="360" cy="240" r="2.5" fill="#fff" opacity="0.8"/>
+      <circle cx="400" cy="248" r="2" fill="#FFB020" opacity="0.8"/>
+      <circle cx="440" cy="240" r="2.3" fill="#fff" opacity="0.7"/>
+      <circle cx="420" cy="262" r="1.8" fill="#fff" opacity="0.7"/>
+      <circle cx="380" cy="258" r="1.6" fill="#FFB020" opacity="0.7"/>
+      <circle cx="460" cy="250" r="1.8" fill="#fff" opacity="0.6"/>
+      <!-- clean line divider glow -->
+      <rect x="326" y="225" width="8" height="95" fill="#FFB020" opacity="0.25"/>
+    </svg>
+    <div class="action-text">
+      <span class="section-tag" style="color:#9aa4ad">In action</span>
+      <h2 class="section-title" style="color:#fff">Watch the grime disappear.</h2>
+      <p class="section-desc" style="color:#c4cbd2">Every pass tells the story — one side dirty, one side done. That's the transformation we bring to your driveway or deck.</p>
+    </div>
+  </div>
+</section>
+
+<section id="pricing" class="pricing-wrap">
+  <div class="wrap">
+    <div class="section-tag" style="color:#9aa4ad">Pricing</div>
+    <h2 class="section-title">One flat price. No surprises.</h2>
+    <p class="section-desc" style="color:#c4cbd2">Priced per job, based on size — same tiers apply to driveways, concrete areas, and wooden decks. Heavy dirt or staining may add a small amount, always confirmed before we start.</p>
+
+    <div class="price-grid">
+      <div class="price-card">
+        <h3>Small</h3>
+        <div class="amt"><sup>$</sup>50</div>
+        <div class="fits">1-car driveway or small deck</div>
+        <ul>
+          <li>Full surface wash</li>
+          <li>Dirt & everyday buildup</li>
+          <li>~30–45 min job</li>
+        </ul>
+      </div>
+      <div class="price-card featured">
+        <span class="tag">Most booked</span>
+        <h3>Standard</h3>
+        <div class="amt"><sup>$</sup>80</div>
+        <div class="fits">2-car driveway or medium deck</div>
+        <ul>
+          <li>Full surface wash</li>
+          <li>Moss & mould spots</li>
+          <li>~45–75 min job</li>
+        </ul>
+      </div>
+      <div class="price-card">
+        <h3>Large</h3>
+        <div class="amt"><sup>$</sup>100</div>
+        <div class="fits">3+ car / wraparound / large deck</div>
+        <ul>
+          <li>Full surface wash</li>
+          <li>Moss & mould spots</li>
+          <li>~75–120 min job</li>
+        </ul>
+      </div>
+    </div>
+    <p class="price-note">Heavy stain treatment available as an add-on — mention it when you book and we'll quote it upfront.</p>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <div class="section-tag">How it works</div>
+    <h2 class="section-title">Book to done in four steps.</h2>
+
+    <div class="steps">
+      <div class="step">
+        <div class="line"></div>
+        <span class="stepnum">Step 1</span>
+        <h3>WhatsApp or email</h3>
+        <p>Tell us your driveway size and any tough stains.</p>
+      </div>
+      <div class="step">
+        <div class="line"></div>
+        <span class="stepnum">Step 2</span>
+        <h3>Flexible timing</h3>
+        <p>Any day, any time — we work around your schedule.</p>
+      </div>
+      <div class="step">
+        <div class="line"></div>
+        <span class="stepnum">Step 3</span>
+        <h3>We wash</h3>
+        <p>Using your outside tap and power socket — we bring the rest.</p>
+      </div>
+      <div class="step">
+        <div class="line"></div>
+        <span class="stepnum">Step 4</span>
+        <h3>Pay on the day</h3>
+        <p>Cash or bank transfer once you're happy.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <div class="wrap contact-inner">
+    <h2>Simply book an appointment<br>for a white, clean driveway.</h2>
+    <div class="contact-cta">
+      <a href="https://wa.me/642041113774" class="phone-link">WhatsApp: 020 4111 3774</a>
+      <a href="mailto:cleandriveway66@gmail.com" class="phone-link" style="margin-top:10px;">cleandriveway66@gmail.com</a>
+      <span class="contact-sub">Flat Bush & surrounding areas</span>
+    </div>
+  </div>
+</section>
+
+<section class="community">
+  <div class="wrap">
+    <p class="community-text">Supporting a local business helps our community thrive — every job keeps money circulating right here in the neighborhood, not a faceless national franchise. We're your neighbors first, cleaners second. 🏘️</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Clean Driveway — Flat Bush, Auckland · <span>Book today</span>
+  </div>
+</footer>
+
+</body>
+</html>
